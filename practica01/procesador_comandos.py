@@ -25,33 +25,48 @@ def calcular_uptime(hora_inicio):
     return f"Tiempo de actividad: {diferencia}"
 
 def mostrar_ayuda():
-    
+    """
+    Comandos disponibles para el usuario
+    """
+    return {
+        "comandos disponibles:\n"
+        "!recordar [nombre] - El bot recordará el nombre proporcionado.\n"
+        "!uptime - Muestra el tiempo que el bot ha estado activo.\n"
+        "!ayuda - Muestra esta lista de comandos.\n"
+    }
     
 def iniciar_agente():
-
+    NOMBRE_BOT = "Enrique"
+    PREFIJO = "!"
+    hora_inicio = datetime.datetime.now()
+    
+    print(f"{obtener_saludo(NOMBRE_BOT)}")
+    print("Escribe '!ayuda' para ver los comandos disponibles.")
+    
+    ejecutando = True
+    while ejecutando:
+        entrada = input(f"[{NOMBRE_BOT}] Ingrese comando: ").strip()
+        
+        if not entrada.startswith(PREFIJO):
+            print("Comando no reconocido.")
+            continue
+        
+        partes = entrada[len(PREFIJO):].split(" ", 1)
+        comando = partes[0]
+        argumento = partes[1] if len(partes) > 1 else ""
+        
+        if comando == "saludo":
+            print(obtener_saludo(NOMBRE_BOT))
+        elif comando == "ayuda":
+            print(mostrar_ayuda())
+        else:
+            print("Comando no reconocido.")
+            
 
 
 def main():
-    obtener_saludo("AgenteBot")
+    iniciar_agente()
     
-    
-    hora_inicio = datetime.datetime.now()
-    
-    while True:
-        comando = input("Ingrese un comando: ")
-        
-        if comando.startswith("recordar "):
-            argumento = comando[len("recordar "):]
-            print(procesar_comando_recordar(argumento))
-        elif comando == "uptime":
-            print(calcular_uptime(hora_inicio))
-        elif comando == "ayuda":
-            mostrar_ayuda()
-        elif comando == "salir":
-            print("¡Hasta luego!")
-            break
-        else:
-            print("Comando no reconocido. Escriba 'ayuda' para ver los comandos disponibles.")
 
 if __name__ == "__main__":
     main()
