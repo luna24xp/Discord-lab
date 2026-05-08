@@ -60,16 +60,15 @@ def iniciar_agente():
         elif comando == "ayuda":
             print(mostrar_ayuda())
         elif comando == "finalizar":
-            ejecutando = finalizar_agente()
+            print("Finalizando el agente. ¡Hasta luego!")
+            ejecutando = False
+        elif comando == "recordar":
+            print(procesar_comando_recordar(argumento))
+        elif comando == "uptime":
+            print(calcular_uptime(hora_inicio))
         else:
             print("Comando no reconocido.")
-
-def finalizar_agente():
-    """
-    Finaliza el agente y muestra un mensaje de despedida
-    """
-    print("Finalizando el agente. ¡Hasta luego!")
-    return False
+            
 
 def main():
     iniciar_agente()
