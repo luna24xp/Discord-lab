@@ -59,10 +59,17 @@ def iniciar_agente():
             print(obtener_saludo(NOMBRE_BOT))
         elif comando == "ayuda":
             print(mostrar_ayuda())
+        elif comando == "finalizar":
+            ejecutando = finalizar_agente()
         else:
             print("Comando no reconocido.")
-            
 
+def finalizar_agente():
+    """
+    Finaliza el agente y muestra un mensaje de despedida
+    """
+    print("Finalizando el agente. ¡Hasta luego!")
+    return False
 
 def main():
     iniciar_agente()
