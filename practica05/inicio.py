@@ -2,7 +2,19 @@ import discord
 import os
 import re
 from dotenv import load_dotenv
+tareas = []  # Nuestra "base de datos" en memoria (lista)
 
+def agregar_tarea(lista_tareas, descripcion):
+    """
+    Agrega una tarea a la lista si cumple con los requisitos.
+    Recibe la lista (paso por referencia) y la cadena de descripción.
+    """
+    if len(descripcion) < 3:
+        return " Error: La descripción es muy corta (mínimo 3 caracteres)."
+    
+    # Creamos un formato de cadena simple para la tarea
+    lista_tareas.append(descripcion)
+    return f" Tarea añadida con éxito."
 def mostrar_bienvenida():
     """Retorna la lista de comandos disponibles."""
     return (
@@ -12,6 +24,8 @@ def mostrar_bienvenida():
     )
 
 def main(entrada):
+        tareas = []  # Nuestra "base de datos" en memoria (lista)
+
     
         PREFIJO = "!"
         
@@ -31,6 +45,11 @@ def main(entrada):
         elif comando == "inicio":
             print(mostrar_bienvenida())
             return mostrar_bienvenida()
+        
+        elif comando == "add":
+            resultado = agregar_tarea(tareas, argumento)
+            print(resultado)
+            return resultado
             
             
         else:
