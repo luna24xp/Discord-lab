@@ -2,38 +2,21 @@ import discord
 import os
 import re
 from dotenv import load_dotenv
+from practica01.gestor_comandos import analizar_comando,buscar_en_diccionario, validar_variable
 
-from practica01.gestor_comandos import analizar_comando, buscar_en_diccionario, validar_variable
-tareas = []  # Nuestra "base de datos" en memoria (lista)
-
-def agregar_tarea(lista_tareas, descripcion):
-    """
-    Agrega una tarea a la lista si cumple con los requisitos.
-    Recibe la lista (paso por referencia) y la cadena de descripción.
-    """
-    if len(descripcion) < 3:
-        return " Error: La descripción es muy corta (mínimo 3 caracteres)."
-    
-    # Creamos un formato de cadena simple para la tarea
-    lista_tareas.append(descripcion)
-    return f" Tarea añadida con éxito."
 def mostrar_bienvenida():
     """Retorna la lista de comandos disponibles."""
     return (
-        "📜 Bot gestor (Modo Estructurado):\n"
-        "📜 Primeros pasos Agente Discord UX:\n"
+        "📜 Bot de Gestión de Tareas (Modo Estructurado):\n"
+        "📜 Escriba !buscar <termino> para buscar en el diccionario:\n"
         "📜 Escriba !Exit para salir del Agente:"
-        "📜 Escriba !buscar para buscar tareas:\n"
-        "📜 Escriba !validar para validar tareas:\n"
-        
+
     )
 
 def main(entrada):
-        tareas = []  # Nuestra "base de datos" en memoria (lista)
-
     
         PREFIJO = "!"
-        
+    
         if not entrada.startswith(PREFIJO):
             if entrada: print("Recuerda usar '!' para comandos.")
             
@@ -46,22 +29,13 @@ def main(entrada):
         if comando == "exit":
             print("Saliendo del gestor...")
             return "Saliendo del gestor..."
+    
+        elif comando == "buscar":
+            return buscar_en_diccionario(argumento)
                         
         elif comando == "inicio":
             print(mostrar_bienvenida())
             return mostrar_bienvenida()
-        
-        elif comando == "buscar":
-            return buscar_en_diccionario(argumento)
-        
-        elif comando == "validar":
-            return validar_variable(argumento)
-        
-        elif comando == "add":
-            resultado = agregar_tarea(tareas, argumento)
-            print(resultado)
-            return resultado
-            
             
         else:
             print(f" Error: Comando '!{comando}' no reconocido.")
@@ -95,7 +69,7 @@ async def on_message(message):
     # 3. Procesamiento: Pasamos el contenido del mensaje a nuestra lógica
     print(f"Mensaje recibido de {message.author}: {message.content}")
 
-    # Solo procesamos si el mensaje empieza con un prefijo (opcional, pero recomendado)
+# Solo procesamos si el mensaje empieza con un prefijo (opcional, pero recomendado)
     if message.content.startswith('!'):
         resultado = main(message.content)
 
