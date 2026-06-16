@@ -1,95 +1,86 @@
-import ast
-import inspect
-import importlib
-import os
-import sys
+import datetime
+
+def analizar_comando(entrada_usuario):
+    """
+    segunda fase del Agente: procesamiento de comandos y lógica dinamica.
+    Aquí el alumno aprednde a separar la 'acción' de los datos."""
+
+    mensaje = entrada_usuario.lower().strip()
+
+    #Simulación de comandos prefijos(como se usan en Discord !Ayuda, !Ejemlo)
+    
+    if mensaje.startswith("!"):
+        partes = mensaje.split(" ", 1)  # Dividir en comando y argumento
+        comando = partes[0]
+        argumento = partes[1] if len(partes) > 1 else None
+
+        #Logica de comandos
+        if comando == "!definir":
+            return buscar_en_diccionario(argumento)
+        
+        elif comando == "!validar":
+            return validar_variable(argumento)
+        
+        elif comando == "!hora":
+            ahora = datetime.datetime.now().strftime("%H:%M:%S")
+            return f"La hora actual del servidor es: {ahora}"
+        
+        elif comando == "!ayuda":
+            return ("Comandos disponibles:\n"
+                    "!definir [termino] - Busca la definición de un término en el diccionario.\n"
+                    "!validar [nombre] - Valida si un nombre de variable es correcto.\n"
+                    "!hora - Muestra la hora actual del servidor.\n"
+                    "!ayuda - Muestra esta ayuda.")
+
+        else:
+            return f" El comando '{comando}' no existe. Usa '!ayuda' para ver los comandos disponibles."
+        
+    return " Recuerda usar el prefijo '!' para darme órdenes, o pregunta algo directamente."
 
 
-def load_tareas_module():
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    if current_dir not in sys.path:
-        sys.path.insert(0, current_dir)
-    return importlib.import_module("tareas_agente")
 
+def buscar_en_diccionario(termino):
+    if not termino:
+        return "Debes escribir qué término quieres definir. Ejemplo: !definir list"
 
-def get_functions(module):
-    return {
-        name: func
-        for name, func in inspect.getmembers(module, inspect.isfunction)
-        if func.__module__ == module.__name__ and not name.startswith("_")
+    # Base de datos simplificada (puedes reutilizar la de la practica anterior)
+    conocimiento = {
+
+        "variable": "Un espacio en memoria para almacener datos",
+        "Lista": "Colección mutable de elementos",
+        "Tupla": "Colección immutable de elementos (no se pueden cambiar)."
+
     }
 
-
-def parse_arguments(args):
-    parsed = []
-    for arg in args:
-        try:
-            parsed.append(ast.literal_eval(arg))
-        except (ValueError, SyntaxError):
-            parsed.append(arg)
-    return parsed
+    return conocimiento.get(termino, f"No encontré '{termino}' en mi base de datos.")
 
 
-def print_help(functions):
-    print("Comandos disponibles:")
-    print("  list                - Lista las funciones disponibles en tareas_agente")
-    print("  help                - Muestra esta ayuda")
-    print("  exit                - Sale del procesador")
-    print("  <funcion> [args...] - Llama a la funcion de tareas_agente con argumentos opcionales")
-    print("\nFunciones disponibles:")
-    for name, func in sorted(functions.items()):
-        signature = str(inspect.signature(func))
-        print(f"  {name}{signature}")
+
+def validar_variable(nombre):
+    """
+    Lógica pedagogica: Enseña a los alumnos las reglas de nombres en python.
+    """
+    if not nombre:
+        return "Debes escribir un nombre de variable para validar. Ejemplo: !validar mi_variable"
 
 
-def execute_command(functions, command, args):
-    if command == "list":
-        print("Funciones disponibles:")
-        for name in sorted(functions):
-            print(f"  {name}")
-        return
-    if command == "help":
-        print_help(functions)
-        return
-    if command == "exit":
-        sys.exit(0)
-    if command not in functions:
-        print(f"Funcion no encontrada: {command}")
-        return
-    func = functions[command]
-    parsed_args = parse_arguments(args)
-    try:
-        result = func(*parsed_args)
-        if result is not None:
-            print(result)
-    except Exception as err:
-        print(f"Error al ejecutar {command}: {err}")
-
-
-def main():
-    try:
-        module = load_tareas_module()
-    except ModuleNotFoundError:
-        print("No se encontro el modulo tareas_agente. Asegurese de que el archivo tareas_agente.py este en el mismo directorio.")
-        return
-    functions = get_functions(module)
-    if len(sys.argv) > 1:
-        command = sys.argv[1]
-        args = sys.argv[2:]
-        execute_command(functions, command, args)
-        return
-
-    print("Procesador de tareas cargado. Escriba 'help' para ver los comandos.")
-    while True:
-        try:
-            line = input("> ").strip()
-        except EOFError:
-            break
-        if not line:
-            continue
-        parts = line.split()
-        execute_command(functions, parts[0], parts[1:])
-
+    #Reglas básicas de python.
+    if nombre[0].isdigit():
+        return f" '{nombre}' no es válido: ¡!No puede comenzar con un número!"
+    if " " in nombre:
+        return f" '{nombre}' no es válido: ¡!No puede contener espacios!"
+    if not nombre.isidentifier():
+        return f" '{nombre}' contiene caracteres no permitidos (solo letras ,números y _)"
+    
+    return f" '{nombre}' es un nombre de variable válido en python."
 
 if __name__ == "__main__":
-    main()
+    print("--- Agente de Lógica: Fase de Comandos ---")
+    print("Prueba comandos como: !validar 123hola o !definir lista\n")
+
+    while True:
+        user_input = input("Alumno >> ")
+        if user_input.lower() in ["salir", "exit"]: break
+
+        respuesta = analizar_comando(user_input)
+        print(f"Bot >> {respuesta}\n")
