@@ -1,5 +1,3 @@
-# agente_gestor_logica.py
-
 import discord
 import os
 from dotenv import load_dotenv
